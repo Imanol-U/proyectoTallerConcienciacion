@@ -1,0 +1,31 @@
+# Lo que no debe entrar en el contexto de construcción de la imagen.
+node_modules
+.next
+test-results
+playwright-report
+resultados-smoke
+coverage
+
+# Secretos y configuración local: las variables se definen en la plataforma.
+.env
+.env.*
+!.env.example
+
+# Pruebas y documentación: no hacen falta para compilar.
+tests
+docs
+*.md
+
+.git
+.gitignore
+.dockerignore
+Dockerfile
+fly.toml
+railway.json
+*.tsbuildinfo
+npm-debug.log*
+
+# Se regenera al compilar (scripts/sync-mediapipe.mjs).
+public/mediapipe
+
+entrega

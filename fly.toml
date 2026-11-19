@@ -1,0 +1,44 @@
+# Despliegue en Fly.io
+#
+#   fly launch --no-deploy --copy-config        # la primera vez (elige nombre y región)
+#   fly secrets set OPENROUTER_API_KEY=tu-clave-de-openrouter ORG_NAME="Tu organización" CONTACT_EMAIL=privacidad@tudominio.org
+#   fly deploy
+#   fly scale count 1                           # UNA sola máquina (ver más abajo)
+#
+# Apagar la demo sin desplegar:  fly secrets set DEMO_ENABLED=false
+
+app = "eres-tu"            # cámbialo: debe ser único en Fly.io
+primary_region = "mad"     # Madrid
+
+[build]
+
+[env]
+  DEMO_ENABLED = "true"
+  UPLOAD_ENABLED = "true"
+  MAX_PER_IP_PER_DAY = "3"
+  MAX_GLOBAL_PER_DAY = "200"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  # Los límites de uso y los vídeos temporales viven en la memoria del proceso:
+  # la máquina no debe apagarse sola ni puede haber más de una.
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 20
+    hard_limit = 40
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/api/health"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "20s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
